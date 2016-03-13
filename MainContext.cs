@@ -36,13 +36,12 @@ namespace Lurkingwind
     internal class MainContext : ApplicationContext
     {
         NotifyIcon icon;
+        OptionsForm optionsForm;
         List<IntPtr> currentWindows;
-        Form1 form;
 
         public MainContext()
         {
-            form = new Form1();
-            MainForm = form;
+            optionsForm = new OptionsForm();
 
             icon = CreateNotifyIcon();
             ThreadExit += new EventHandler((sender, e) => icon.Dispose());
@@ -58,9 +57,13 @@ namespace Lurkingwind
 
             icon = new NotifyIcon();
             icon.Text = Application.ProductName;
-            icon.Icon = form.Icon;
+            icon.Icon = optionsForm.Icon;
 
             var ctxmenu = new ContextMenuStrip();
+            var options = new ToolStripMenuItem("&Options...", null);
+            options.Click += new EventHandler((sender, e) => optionsForm.ShowDialog());
+            ctxmenu.Items.Add(options);
+            ctxmenu.Items.Add(new ToolStripSeparator());
             var exit = new ToolStripMenuItem("Exit", null);
             exit.Click += new EventHandler((sender, e) => ExitThread());
             ctxmenu.Items.Add(exit);
