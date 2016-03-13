@@ -35,6 +35,7 @@ namespace Lurkingwind
 {
     internal class MainContext : ApplicationContext
     {
+        NotifyIcon icon;
         List<IntPtr> currentWindows;
         Form1 form;
 
@@ -43,8 +44,29 @@ namespace Lurkingwind
             form = new Form1();
             MainForm = form;
 
+            icon = CreateNotifyIcon();
+            ThreadExit += new EventHandler((sender, e) => icon.Dispose());
+            icon.Visible = true;
+
             currentWindows = new List<IntPtr>();
             NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(ListAllWindows), IntPtr.Zero);
+        }
+
+        NotifyIcon CreateNotifyIcon()
+        {
+            NotifyIcon icon;
+
+            icon = new NotifyIcon();
+            icon.Text = Application.ProductName;
+            icon.Icon = form.Icon;
+
+            var ctxmenu = new ContextMenuStrip();
+            var exit = new ToolStripMenuItem("Exit", null);
+            exit.Click += new EventHandler((sender, e) => ExitThread());
+            ctxmenu.Items.Add(exit);
+            icon.ContextMenuStrip = ctxmenu;
+
+            return icon;
         }
 
         bool ListAllWindows(IntPtr hWnd, IntPtr lparam)
