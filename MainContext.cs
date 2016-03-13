@@ -64,7 +64,7 @@ namespace Lurkingwind
             options.Click += new EventHandler((sender, e) => optionsForm.ShowDialog());
             ctxmenu.Items.Add(options);
             ctxmenu.Items.Add(new ToolStripSeparator());
-            var exit = new ToolStripMenuItem("Exit", null);
+            var exit = new ToolStripMenuItem("E&xit", null);
             exit.Click += new EventHandler((sender, e) => ExitThread());
             ctxmenu.Items.Add(exit);
             icon.ContextMenuStrip = ctxmenu;
