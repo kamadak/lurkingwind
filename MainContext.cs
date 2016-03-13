@@ -27,22 +27,46 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Lurkingwind
 {
-    static class Program
+    internal class MainContext : ApplicationContext
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        List<IntPtr> currentWindows;
+        Form1 form;
+
+        public MainContext()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainContext());
+            form = new Form1();
+            MainForm = form;
+
+            currentWindows = new List<IntPtr>();
+            NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(ListAllWindows), IntPtr.Zero);
+        }
+
+        bool ListAllWindows(IntPtr hWnd, IntPtr lparam)
+        {
+            int ret, tlen;
+
+            currentWindows.Add(hWnd);
+
+            Console.WriteLine("{0}", hWnd);
+            tlen = NativeMethods.GetWindowTextLength(hWnd);
+            if (tlen > 0)
+            {
+                var title = new StringBuilder(tlen + 1);
+                ret = NativeMethods.GetWindowText(hWnd, title, title.Capacity);
+                if (ret != 0)
+                    Console.WriteLine("{0}", title);
+            }
+            var classname = new StringBuilder(256);
+            ret = NativeMethods.GetClassName(hWnd, classname, classname.Capacity);
+            if (ret != 0)
+                Console.WriteLine("{0}", classname);
+            return true;
         }
     }
 }
