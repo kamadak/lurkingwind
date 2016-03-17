@@ -37,11 +37,14 @@ namespace Lurkingwind
     {
         NotifyIcon icon;
         OptionsForm optionsForm;
+        Settings settings;
         List<IntPtr> currentWindows;
 
         public MainContext()
         {
             optionsForm = new OptionsForm();
+
+            settings = new Settings();
 
             icon = CreateNotifyIcon();
             ThreadExit += new EventHandler((sender, e) => icon.Dispose());
