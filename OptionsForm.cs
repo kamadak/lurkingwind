@@ -41,6 +41,10 @@ namespace Lurkingwind
         public OptionsForm()
         {
             InitializeComponent();
+
+            actionColumn.ValueType = typeof(Rule.Actions);
+            foreach (var x in Enum.GetValues(typeof(Rule.Actions)))
+                actionColumn.Items.Add(x);
         }
     }
 }
