@@ -43,6 +43,19 @@ namespace Lurkingwind
             get { return (List<SavedRule>)this["RuleList"]; }
             set { this["RuleList"] = value; }
         }
+
+        public void ExternRuleList(List<Rule> list)
+        {
+            RuleList = list.Select(x => SavedRule.Extern(x)).ToList();
+        }
+
+        public List<Rule> InternRuleList()
+        {
+            if (RuleList != null)
+                return RuleList.Select(x => SavedRule.Intern(x)).ToList();
+            else
+                return new List<Rule>();
+        }
     }
 
     public class Rule

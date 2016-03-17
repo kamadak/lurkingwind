@@ -46,5 +46,38 @@ namespace Lurkingwind
             foreach (var x in Enum.GetValues(typeof(Rule.Actions)))
                 actionColumn.Items.Add(x);
         }
+
+        public void SetRuleList(List<Rule> list)
+        {
+            dataGridView1.Rows.Clear();
+            foreach (var x in list)
+            {
+                string titlePattern =
+                    x.TitlePattern != null ? x.TitlePattern.ToString() : null;
+                string classPattern =
+                    x.ClassPattern != null ? x.ClassPattern.ToString() : null;
+                dataGridView1.Rows.Add(titlePattern, classPattern, x.Action);
+            }
+        }
+
+        public List<Rule> GetRuleList()
+        {
+            List<Rule> list = new List<Rule>();
+            foreach (var x in dataGridView1.Rows.Cast<DataGridViewRow>())
+            {
+                var titlePattern = (string)x.Cells[0].Value;
+                var classPattern = (string)x.Cells[1].Value;
+                var action = (Nullable<Rule.Actions>)x.Cells[2].Value;
+
+                // If the title and class patterns are both empty,
+                // guess that the user want to remove the row.
+                if (string.IsNullOrEmpty(titlePattern) && string.IsNullOrEmpty(classPattern))
+                    continue;
+                if (!action.HasValue)
+                    continue;
+                list.Add(new Rule(titlePattern, classPattern, action.Value));
+            }
+            return list;
+        }
     }
 }

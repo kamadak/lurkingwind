@@ -38,6 +38,7 @@ namespace Lurkingwind
         NotifyIcon icon;
         OptionsForm optionsForm;
         Settings settings;
+        List<Rule> ruleList;
         List<IntPtr> currentWindows;
 
         public MainContext()
@@ -45,6 +46,7 @@ namespace Lurkingwind
             optionsForm = new OptionsForm();
 
             settings = new Settings();
+            ruleList = settings.InternRuleList();
 
             icon = CreateNotifyIcon();
             ThreadExit += new EventHandler((sender, e) => icon.Dispose());
@@ -64,7 +66,7 @@ namespace Lurkingwind
 
             var ctxmenu = new ContextMenuStrip();
             var options = new ToolStripMenuItem("&Options...", null);
-            options.Click += new EventHandler((sender, e) => optionsForm.ShowDialog());
+            options.Click += new EventHandler((sender, e) => ShowOptionsDialog());
             ctxmenu.Items.Add(options);
             ctxmenu.Items.Add(new ToolStripSeparator());
             var exit = new ToolStripMenuItem("E&xit", null);
@@ -73,6 +75,17 @@ namespace Lurkingwind
             icon.ContextMenuStrip = ctxmenu;
 
             return icon;
+        }
+
+        void ShowOptionsDialog()
+        {
+            optionsForm.SetRuleList(ruleList);
+            var ret = optionsForm.ShowDialog();
+            if (ret != DialogResult.OK)
+                return;
+            ruleList = optionsForm.GetRuleList();
+            settings.ExternRuleList(ruleList);
+            settings.Save();
         }
 
         bool ListAllWindows(IntPtr hWnd, IntPtr lparam)
