@@ -32,6 +32,19 @@ namespace Lurkingwind
 {
     internal static class NativeMethods
     {
+        public const int GWL_STYLE = -16;
+        public const int GWL_EXSTYLE = -20;
+
+        public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+        public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+
+        public const uint SWP_NOSIZE = 0x0001;
+        public const uint SWP_NOMOVE = 0x0002;
+        public const uint SWP_NOACTIVATE = 0x0010;
+        public const uint SWP_ASYNCWINDOWPOS = 0x4000;
+
+        public const int WS_VISIBLE = 0x10000000;
+
         public delegate bool EnumWindowsDelegate(IntPtr hWnd, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -43,10 +56,21 @@ namespace Lurkingwind
             StringBuilder lpClassName, int nMaxCount);
 
         [DllImport("user32.dll", SetLastError = true)]
+        public static extern Int32 GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern int GetWindowText(IntPtr hWnd,
             StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int GetWindowTextLength(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern Int32 SetWindowLong(IntPtr hWnd,
+            int nIndex, Int32 dwNewLong);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool SetWindowPos(IntPtr hWnd,
+            IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlag);
     }
 }

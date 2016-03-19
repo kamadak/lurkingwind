@@ -35,6 +35,9 @@ namespace Lurkingwind
 {
     internal class MainContext : ApplicationContext
     {
+        const int timerInterval = 1 * 1000;
+        const int balloonTimeout = 30 * 1000;
+
         NotifyIcon icon;
         OptionsForm optionsForm;
         Settings settings;
@@ -42,6 +45,7 @@ namespace Lurkingwind
         List<Rule> ruleList;
         List<IntPtr> currentWindows;
         List<IntPtr> newWindows;
+        StringBuilder newText;
 
         public MainContext()
         {
@@ -54,15 +58,24 @@ namespace Lurkingwind
             ThreadExit += new EventHandler((sender, e) => icon.Dispose());
             icon.Visible = true;
 
+            icon.BalloonTipIcon = ToolTipIcon.Info;
+            icon.BalloonTipTitle = Application.ProductName;
+
             currentWindows = new List<IntPtr>();
             NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(ListAllWindows), IntPtr.Zero);
 
             timer = new System.Windows.Forms.Timer();
-            timer.Interval = 1 * 1000;
+            timer.Interval = timerInterval;
             timer.Tick += new EventHandler((sender, e) => {
                 newWindows = new List<IntPtr>();
+                newText = new StringBuilder();
                 NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(CheckNewWindows), IntPtr.Zero);
                 currentWindows = newWindows;
+                if (newText.Length > 0)
+                {
+                    icon.BalloonTipText = newText.ToString();
+                    icon.ShowBalloonTip(balloonTimeout);
+                }
             });
             timer.Start();
         }
@@ -126,8 +139,42 @@ namespace Lurkingwind
                 if (!x.IsMatch(title.ToString(), classname.ToString()))
                     continue;
                 Console.WriteLine("match: {0}, {1}", title.ToString(), classname.ToString());
+                switch (x.Action)
+                {
+                case Rule.Actions.MoveToFront:
+                    MoveToFront(hWnd);
+                    break;
+                case Rule.Actions.Notify:
+                    newText.AppendLine(string.Format("{0} appeared.", title));
+                    break;
+                }
             }
             return true;
+        }
+
+        void MoveToFront(IntPtr hWnd)
+        {
+            const uint flags =
+                NativeMethods.SWP_NOSIZE |
+                NativeMethods.SWP_NOMOVE |
+                NativeMethods.SWP_NOACTIVATE |
+                NativeMethods.SWP_ASYNCWINDOWPOS;
+            Int32 style, exstyle;
+
+            // It makes no sense to raise an invisible window.
+            style = NativeMethods.GetWindowLong(hWnd, NativeMethods.GWL_STYLE);
+            if ((style & NativeMethods.WS_VISIBLE) == 0)
+                return;
+
+            // Save WS_EX_TOPMOST.
+            exstyle = NativeMethods.GetWindowLong(hWnd, NativeMethods.GWL_EXSTYLE);
+            // Restack the window.
+            if (!NativeMethods.SetWindowPos(hWnd, NativeMethods.HWND_NOTOPMOST, 0, 0, 0, 0, flags))
+                throw new ApplicationException("SetWindowPos() failed");
+            if (!NativeMethods.SetWindowPos(hWnd, NativeMethods.HWND_TOPMOST, 0, 0, 0, 0, flags))
+                throw new ApplicationException("SetWindowPos() failed");
+            // Restore WS_EX_TOPMOST.
+            NativeMethods.SetWindowLong(hWnd, NativeMethods.GWL_EXSTYLE, exstyle);
         }
     }
 }
