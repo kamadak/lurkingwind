@@ -138,7 +138,6 @@ namespace Lurkingwind
             {
                 if (!x.IsMatch(title.ToString(), classname.ToString()))
                     continue;
-                Console.WriteLine("match: {0}, {1}", title.ToString(), classname.ToString());
                 switch (x.Action)
                 {
                 case Rule.Actions.MoveToFront:
