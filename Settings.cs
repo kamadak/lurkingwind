@@ -74,6 +74,15 @@ namespace Lurkingwind
                 ClassPattern = new Regex(classPattern, RegexOptions.Compiled);
             Action = action;
         }
+
+        public bool IsMatch(string title, string classname)
+        {
+            if (TitlePattern != null && !TitlePattern.IsMatch(title))
+                return false;
+            if (ClassPattern != null && !ClassPattern.IsMatch(classname))
+                return false;
+            return true;
+        }
     }
 
     public class SavedRule

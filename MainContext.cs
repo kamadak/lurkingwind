@@ -38,8 +38,10 @@ namespace Lurkingwind
         NotifyIcon icon;
         OptionsForm optionsForm;
         Settings settings;
+        System.Windows.Forms.Timer timer;
         List<Rule> ruleList;
         List<IntPtr> currentWindows;
+        List<IntPtr> newWindows;
 
         public MainContext()
         {
@@ -54,6 +56,15 @@ namespace Lurkingwind
 
             currentWindows = new List<IntPtr>();
             NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(ListAllWindows), IntPtr.Zero);
+
+            timer = new System.Windows.Forms.Timer();
+            timer.Interval = 1 * 1000;
+            timer.Tick += new EventHandler((sender, e) => {
+                newWindows = new List<IntPtr>();
+                NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(CheckNewWindows), IntPtr.Zero);
+                currentWindows = newWindows;
+            });
+            timer.Start();
         }
 
         NotifyIcon CreateNotifyIcon()
@@ -86,27 +97,36 @@ namespace Lurkingwind
             ruleList = optionsForm.GetRuleList();
             settings.ExternRuleList(ruleList);
             settings.Save();
+            // No need to call ListAllWindows() again here.  The timer
+            // runs while the dialog is shown, so do not worry about
+            // detecting a lot of windows at a burst.
         }
 
         bool ListAllWindows(IntPtr hWnd, IntPtr lparam)
         {
-            int ret, tlen;
-
             currentWindows.Add(hWnd);
+            return true;
+        }
 
-            Console.WriteLine("{0}", hWnd);
-            tlen = NativeMethods.GetWindowTextLength(hWnd);
+        bool CheckNewWindows(IntPtr hWnd, IntPtr lparam)
+        {
+            newWindows.Add(hWnd);
+            if (currentWindows.Contains(hWnd))
+                return true;
+
+            int tlen = NativeMethods.GetWindowTextLength(hWnd);
+            var title = new StringBuilder(tlen + 1);
             if (tlen > 0)
-            {
-                var title = new StringBuilder(tlen + 1);
-                ret = NativeMethods.GetWindowText(hWnd, title, title.Capacity);
-                if (ret != 0)
-                    Console.WriteLine("{0}", title);
-            }
+                NativeMethods.GetWindowText(hWnd, title, title.Capacity);
             var classname = new StringBuilder(256);
-            ret = NativeMethods.GetClassName(hWnd, classname, classname.Capacity);
-            if (ret != 0)
-                Console.WriteLine("{0}", classname);
+            NativeMethods.GetClassName(hWnd, classname, classname.Capacity);
+
+            foreach (var x in ruleList)
+            {
+                if (!x.IsMatch(title.ToString(), classname.ToString()))
+                    continue;
+                Console.WriteLine("match: {0}, {1}", title.ToString(), classname.ToString());
+            }
             return true;
         }
     }
