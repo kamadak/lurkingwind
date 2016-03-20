@@ -103,6 +103,13 @@ namespace Lurkingwind
 
         void ShowOptionsDialog()
         {
+            // If already shown, do not call ShowDialog() again.
+            if (optionsForm.Visible)
+            {
+                optionsForm.Activate();
+                return;
+            }
+
             optionsForm.SetRuleList(ruleList);
             var ret = optionsForm.ShowDialog();
             if (ret != DialogResult.OK)
