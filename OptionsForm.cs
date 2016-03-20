@@ -42,6 +42,7 @@ namespace Lurkingwind
         {
             InitializeComponent();
 
+            Icon = Properties.Resources.icon_lurkingwind;
             actionColumn.ValueType = typeof(Rule.Actions);
             foreach (var x in Enum.GetValues(typeof(Rule.Actions)))
                 actionColumn.Items.Add(x);

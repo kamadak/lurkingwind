@@ -86,7 +86,7 @@ namespace Lurkingwind
 
             icon = new NotifyIcon();
             icon.Text = Application.ProductName;
-            icon.Icon = optionsForm.Icon;
+            icon.Icon = Properties.Resources.icon_lurkingwind;
 
             var ctxmenu = new ContextMenuStrip();
             var options = new ToolStripMenuItem("&Options...", null);
