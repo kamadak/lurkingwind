@@ -43,8 +43,8 @@ namespace Lurkingwind
         Settings settings;
         System.Windows.Forms.Timer timer;
         List<Rule> ruleList;
-        List<IntPtr> currentWindows;
-        List<IntPtr> newWindows;
+        HashSet<IntPtr> currentWindows;
+        HashSet<IntPtr> newWindows;
         StringBuilder newText;
 
         public MainContext()
@@ -61,13 +61,13 @@ namespace Lurkingwind
             icon.BalloonTipIcon = ToolTipIcon.Info;
             icon.BalloonTipTitle = Application.ProductName;
 
-            currentWindows = new List<IntPtr>();
+            currentWindows = new HashSet<IntPtr>();
             NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(ListAllWindows), IntPtr.Zero);
 
             timer = new System.Windows.Forms.Timer();
             timer.Interval = timerInterval;
             timer.Tick += new EventHandler((sender, e) => {
-                newWindows = new List<IntPtr>();
+                newWindows = new HashSet<IntPtr>();
                 newText = new StringBuilder();
                 NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(CheckNewWindows), IntPtr.Zero);
                 currentWindows = newWindows;
