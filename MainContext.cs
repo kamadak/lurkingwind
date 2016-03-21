@@ -43,8 +43,7 @@ namespace Lurkingwind
         Settings settings;
         System.Windows.Forms.Timer timer;
         List<Rule> ruleList;
-        HashSet<IntPtr> currentWindows;
-        HashSet<IntPtr> newWindows;
+        HashSet<IntPtr> allWindows, newWindows, prevAllWindows, prevNewWindows;
         StringBuilder newText;
 
         public MainContext()
@@ -61,16 +60,19 @@ namespace Lurkingwind
             icon.BalloonTipIcon = ToolTipIcon.Info;
             icon.BalloonTipTitle = Application.ProductName;
 
-            currentWindows = new HashSet<IntPtr>();
+            prevAllWindows = new HashSet<IntPtr>();
+            prevNewWindows = new HashSet<IntPtr>();
             NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(ListAllWindows), IntPtr.Zero);
 
             timer = new System.Windows.Forms.Timer();
             timer.Interval = timerInterval;
             timer.Tick += new EventHandler((sender, e) => {
+                allWindows = new HashSet<IntPtr>();
                 newWindows = new HashSet<IntPtr>();
                 newText = new StringBuilder();
                 NativeMethods.EnumWindows(new NativeMethods.EnumWindowsDelegate(CheckNewWindows), IntPtr.Zero);
-                currentWindows = newWindows;
+                prevAllWindows = allWindows;
+                prevNewWindows = newWindows;
                 if (newText.Length > 0)
                 {
                     icon.BalloonTipText = newText.ToString();
@@ -124,14 +126,18 @@ namespace Lurkingwind
 
         bool ListAllWindows(IntPtr hWnd, IntPtr lparam)
         {
-            currentWindows.Add(hWnd);
+            prevAllWindows.Add(hWnd);
             return true;
         }
 
         bool CheckNewWindows(IntPtr hWnd, IntPtr lparam)
         {
-            newWindows.Add(hWnd);
-            if (currentWindows.Contains(hWnd))
+            // Mitigate a race condition.  A new window may not yet have
+            // the title set, so wait one cycle before checking it.
+            allWindows.Add(hWnd);
+            if (!prevAllWindows.Contains(hWnd))
+                newWindows.Add(hWnd);
+            if (!prevNewWindows.Contains(hWnd))
                 return true;
 
             int tlen = NativeMethods.GetWindowTextLength(hWnd);
