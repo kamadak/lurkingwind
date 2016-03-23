@@ -48,6 +48,16 @@ namespace Lurkingwind
                 actionColumn.Items.Add(x);
         }
 
+        public bool GetStartupCheckState()
+        {
+            return checkBoxStartup.Checked;
+        }
+
+        public void SetStartupCheckState(bool enable)
+        {
+            checkBoxStartup.Checked = enable;
+        }
+
         public void SetRuleList(List<Rule> list)
         {
             dataGridView1.Rows.Clear();

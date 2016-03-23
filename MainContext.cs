@@ -35,6 +35,8 @@ namespace Lurkingwind
 {
     internal class MainContext : ApplicationContext
     {
+        const string startupRegPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
+        const string startupKey = "Lurkingwind";
         const int timerInterval = 1 * 1000;
         const int balloonTimeout = 30 * 1000;
 
@@ -113,15 +115,19 @@ namespace Lurkingwind
             }
 
             optionsForm.SetRuleList(ruleList);
+            optionsForm.SetStartupCheckState(GetRegistryStartup());
+
             var ret = optionsForm.ShowDialog();
             if (ret != DialogResult.OK)
                 return;
+
             ruleList = optionsForm.GetRuleList();
             settings.ExternRuleList(ruleList);
             settings.Save();
             // No need to call ListAllWindows() again here.  The timer
             // runs while the dialog is shown, so do not worry about
             // detecting a lot of windows at a burst.
+            SetRegistryStartup(optionsForm.GetStartupCheckState());
         }
 
         bool ListAllWindows(IntPtr hWnd, IntPtr lparam)
@@ -187,6 +193,29 @@ namespace Lurkingwind
                 throw new ApplicationException("SetWindowPos() failed");
             // Restore WS_EX_TOPMOST.
             NativeMethods.SetWindowLong(hWnd, NativeMethods.GWL_EXSTYLE, exstyle);
+        }
+
+        bool GetRegistryStartup()
+        {
+            using (var reg = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(
+                startupRegPath, false))
+            {
+                return reg.GetValue(startupKey) != null;
+            }
+        }
+
+        void SetRegistryStartup(bool enable)
+        {
+            using (var reg = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(
+                startupRegPath, true))
+            {
+                // A Windows pathname does not contain double quotation
+                // marks or backslashes, so simple quoting is OK.
+                if (enable)
+                    reg.SetValue(startupKey, "\"" + Application.ExecutablePath + "\"");
+                else
+                    reg.DeleteValue(startupKey, false);
+            }
         }
     }
 }

@@ -18,8 +18,10 @@ Installation
 
    To install, just put the executable somewhere.
 
-   To uninstall, remove Lurkingwind folder in %LocalAppData% and
-   remove the executable.
+   To uninstall,
+   -  uncheck the checkbox to run on Windows startup,
+   -  remove the executable, and
+   -  remove Lurkingwind folder in %LocalAppData%.
 
 Copyright and License
 ---------------------
