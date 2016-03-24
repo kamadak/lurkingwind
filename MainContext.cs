@@ -159,6 +159,8 @@ namespace Lurkingwind
                     continue;
                 switch (x.Action)
                 {
+                case Rule.Actions.DoNothing:
+                    break;
                 case Rule.Actions.MoveToFront:
                     MoveToFront(hWnd);
                     break;

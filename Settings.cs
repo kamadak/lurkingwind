@@ -60,7 +60,7 @@ namespace Lurkingwind
 
     public class Rule
     {
-        public enum Actions { MoveToFront, Notify };
+        public enum Actions { DoNothing, MoveToFront, Notify };
 
         public Regex TitlePattern { get; set; }
         public Regex ClassPattern { get; set; }
