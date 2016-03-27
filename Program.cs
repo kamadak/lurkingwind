@@ -34,6 +34,8 @@ namespace Lurkingwind
 {
     static class Program
     {
+        const string mutexName = "Lurkingwind";
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -42,7 +44,14 @@ namespace Lurkingwind
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainContext());
+            using (var mutex = new System.Threading.Mutex(true, mutexName))
+            {
+                if (mutex.WaitOne(0, false))
+                    Application.Run(new MainContext());
+                else
+                    MessageBox.Show("Another instance is running.",
+                        Application.ProductName);
+            }
         }
     }
 }
