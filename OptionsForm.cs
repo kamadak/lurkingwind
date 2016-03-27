@@ -43,6 +43,9 @@ namespace Lurkingwind
             InitializeComponent();
 
             Icon = Properties.Resources.icon_lurkingwind;
+            // Use the flat style so that selected combo boxes look
+            // reversed like other cells.
+            actionColumn.FlatStyle = FlatStyle.Flat;
             actionColumn.ValueType = typeof(Rule.Actions);
             foreach (var x in Enum.GetValues(typeof(Rule.Actions)))
                 actionColumn.Items.Add(x);
