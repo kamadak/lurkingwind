@@ -26,7 +26,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -34,14 +33,58 @@ using System.Threading.Tasks;
 
 namespace Lurkingwind
 {
-    public class Settings : ApplicationSettingsBase
+    public class Settings
     {
-        [UserScopedSetting()]
-        [SettingsSerializeAs(System.Configuration.SettingsSerializeAs.Xml)]
-        public List<SavedRule> RuleList
+        const string defaultSubdir = "Lurkingwind";
+        const string defaultBasename = "user.config";
+        const int currentVersion = 1;
+
+        [System.Xml.Serialization.XmlIgnore]
+        public string Path { get; private set; }
+
+        public int SettingsVersion { get; set; }
+        [System.Xml.Serialization.XmlArrayItem(ElementName = "Rule")]
+        public List<SavedRule> RuleList { get; set; }
+
+        public Settings()
         {
-            get { return (List<SavedRule>)this["RuleList"]; }
-            set { this["RuleList"] = value; }
+            SettingsVersion = currentVersion;
+        }
+
+        public void Load()
+        {
+            Path = InitializePath();
+            var serializer = new System.Xml.Serialization.XmlSerializer(
+                typeof(Settings));
+            using (var sr = new System.IO.StreamReader(
+                Path, new System.Text.UTF8Encoding(false)))
+            {
+                var tmp = (Settings)serializer.Deserialize(sr);
+                RuleList = tmp.RuleList;
+            }
+        }
+
+        string InitializePath()
+        {
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            if (!System.IO.Directory.Exists(appData))
+                throw new System.IO.DirectoryNotFoundException(
+                    string.Format("Application data folder \"{0}\" is not found.", appData));
+            var dir = System.IO.Path.Combine(appData, defaultSubdir);
+            if (!System.IO.Directory.Exists(dir))
+                System.IO.Directory.CreateDirectory(dir);
+            return System.IO.Path.Combine(dir, defaultBasename);
+        }
+
+        public void Save()
+        {
+            var serializer = new System.Xml.Serialization.XmlSerializer(
+                typeof(Settings));
+            using (var sw = new System.IO.StreamWriter(
+                Path, false, new System.Text.UTF8Encoding(false)))
+            {
+                serializer.Serialize(sw, this);
+            }
         }
 
         public void ExternRuleList(List<Rule> list)

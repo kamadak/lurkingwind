@@ -53,6 +53,7 @@ namespace Lurkingwind
             optionsForm = new OptionsForm();
 
             settings = new Settings();
+            LoadSettings();
             ruleList = settings.InternRuleList();
 
             icon = CreateNotifyIcon();
@@ -123,7 +124,7 @@ namespace Lurkingwind
 
             ruleList = optionsForm.GetRuleList();
             settings.ExternRuleList(ruleList);
-            settings.Save();
+            SaveSettings();
             // No need to call ListAllWindows() again here.  The timer
             // runs while the dialog is shown, so do not worry about
             // detecting a lot of windows at a burst.
@@ -195,6 +196,51 @@ namespace Lurkingwind
                 throw new ApplicationException("SetWindowPos() failed");
             // Restore WS_EX_TOPMOST.
             NativeMethods.SetWindowLong(hWnd, NativeMethods.GWL_EXSTYLE, exstyle);
+        }
+
+        void LoadSettings()
+        {
+            try
+            {
+                settings.Load();
+            }
+            catch (System.SystemException e)
+            {
+                // This can happen when the program is executed
+                // for the first time.
+                if (e is System.IO.FileNotFoundException)
+                    return;
+
+                string message = null;
+                if (e is System.InvalidOperationException && e.InnerException is System.Xml.XmlException)
+                    message = string.Format("{0}: {1}", settings.Path, e.InnerException.Message);
+                else
+                    message = e.Message;
+
+                MessageBox.Show(message, Application.ProductName,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Application.Run() is not yet called, so ExitThread()
+                // or Application.Exit() has no effect here.
+                System.Environment.Exit(1);
+            }
+        }
+
+        void SaveSettings()
+        {
+            try
+            {
+                settings.Save();
+            }
+            catch (System.SystemException e)
+            {
+                // The following exceptions are mainly expected, but other
+                // ones are also caught to avoid crash without saving user
+                // settings.
+                // - System.IO.IOException
+                // - System.UnauthorizedAccessException
+                MessageBox.Show(e.Message, Application.ProductName,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         bool GetRegistryStartup()
