@@ -50,7 +50,8 @@ namespace Lurkingwind
                     Application.Run(new MainContext());
                 else
                     MessageBox.Show("Another instance is running.",
-                        Application.ProductName);
+                        Application.ProductName,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
