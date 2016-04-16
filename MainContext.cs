@@ -129,12 +129,13 @@ namespace Lurkingwind
             if (ret != DialogResult.OK)
                 return;
 
+            // No need to call ListAllWindows() again after getting a new
+            // rule list.  The timer continues to run while the dialog is
+            // shown, so there is no need to worry about detecting a lot of
+            // windows at a burst.
             ruleList = optionsForm.GetRuleList();
             settings.ExternRuleList(ruleList);
             SaveSettings();
-            // No need to call ListAllWindows() again here.  The timer
-            // runs while the dialog is shown, so do not worry about
-            // detecting a lot of windows at a burst.
             SetRegistryStartup(optionsForm.GetStartupCheckState());
         }
 
