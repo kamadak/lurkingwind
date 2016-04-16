@@ -69,5 +69,14 @@ namespace Lurkingwind.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+
+        /// <summary>
+        ///   Looks up the license in RTF.
+        /// </summary>
+        internal static string license_rtf {
+            get {
+                return ResourceManager.GetString("license_rtf", resourceCulture);
+            }
+        }
     }
 }

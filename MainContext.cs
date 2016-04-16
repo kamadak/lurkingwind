@@ -42,6 +42,7 @@ namespace Lurkingwind
 
         NotifyIcon icon;
         OptionsForm optionsForm;
+        AboutBox aboutbox;
         Settings settings;
         System.Windows.Forms.Timer timer;
         List<Rule> ruleList;
@@ -51,6 +52,7 @@ namespace Lurkingwind
         public MainContext()
         {
             optionsForm = new OptionsForm();
+            aboutbox = new AboutBox();
 
             settings = new Settings();
             LoadSettings();
@@ -97,6 +99,9 @@ namespace Lurkingwind
             var options = new ToolStripMenuItem("&Options...", null);
             options.Click += new EventHandler((sender, e) => ShowOptionsDialog());
             ctxmenu.Items.Add(options);
+            var about = new ToolStripMenuItem("&About", null);
+            about.Click += new EventHandler((sender, e) => ShowAboutBox());
+            ctxmenu.Items.Add(about);
             ctxmenu.Items.Add(new ToolStripSeparator());
             var exit = new ToolStripMenuItem("E&xit", null);
             exit.Click += new EventHandler((sender, e) => ExitThread());
@@ -129,6 +134,14 @@ namespace Lurkingwind
             // runs while the dialog is shown, so do not worry about
             // detecting a lot of windows at a burst.
             SetRegistryStartup(optionsForm.GetStartupCheckState());
+        }
+
+        void ShowAboutBox()
+        {
+            if (aboutbox.Visible)
+                aboutbox.Activate();
+            else
+                aboutbox.ShowDialog();
         }
 
         bool ListAllWindows(IntPtr hWnd, IntPtr lparam)
