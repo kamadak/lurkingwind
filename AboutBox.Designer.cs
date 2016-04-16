@@ -66,19 +66,19 @@
             this.logoPictureBox.Location = new System.Drawing.Point(3, 3);
             this.logoPictureBox.Name = "logoPictureBox";
             this.tableLayoutPanel.SetRowSpan(this.logoPictureBox, 2);
-            this.logoPictureBox.Size = new System.Drawing.Size(48, 48);
-            this.logoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.logoPictureBox.Size = new System.Drawing.Size(32, 32);
+            this.logoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.logoPictureBox.TabIndex = 12;
             this.logoPictureBox.TabStop = false;
             // 
             // labelProductName
             // 
             this.labelProductName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelProductName.Location = new System.Drawing.Point(60, 0);
+            this.labelProductName.Location = new System.Drawing.Point(44, 0);
             this.labelProductName.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
-            this.labelProductName.MaximumSize = new System.Drawing.Size(0, 38);
+            this.labelProductName.MaximumSize = new System.Drawing.Size(0, 22);
             this.labelProductName.Name = "labelProductName";
-            this.labelProductName.Size = new System.Drawing.Size(303, 38);
+            this.labelProductName.Size = new System.Drawing.Size(319, 22);
             this.labelProductName.TabIndex = 19;
             this.labelProductName.Text = "Product Name";
             this.labelProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -86,11 +86,11 @@
             // labelVersion
             // 
             this.labelVersion.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelVersion.Location = new System.Drawing.Point(60, 38);
+            this.labelVersion.Location = new System.Drawing.Point(44, 22);
             this.labelVersion.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.labelVersion.MaximumSize = new System.Drawing.Size(0, 16);
             this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(303, 16);
+            this.labelVersion.Size = new System.Drawing.Size(319, 16);
             this.labelVersion.TabIndex = 0;
             this.labelVersion.Text = "Version";
             this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -101,9 +101,10 @@
             this.tableLayoutPanel.SetColumnSpan(this.panelLicense, 2);
             this.panelLicense.Controls.Add(this.richTextBoxLicense);
             this.panelLicense.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelLicense.Location = new System.Drawing.Point(3, 57);
+            this.panelLicense.Location = new System.Drawing.Point(3, 43);
+            this.panelLicense.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
             this.panelLicense.Name = "panelLicense";
-            this.panelLicense.Size = new System.Drawing.Size(360, 158);
+            this.panelLicense.Size = new System.Drawing.Size(360, 172);
             this.panelLicense.TabIndex = 25;
             // 
             // richTextBoxLicense
@@ -114,7 +115,7 @@
             this.richTextBoxLicense.Name = "richTextBoxLicense";
             this.richTextBoxLicense.ReadOnly = true;
             this.richTextBoxLicense.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.richTextBoxLicense.Size = new System.Drawing.Size(358, 156);
+            this.richTextBoxLicense.Size = new System.Drawing.Size(358, 170);
             this.richTextBoxLicense.TabIndex = 0;
             this.richTextBoxLicense.Text = "Copyright and License";
             // 
@@ -144,7 +145,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "AboutBox";
             this.tableLayoutPanel.ResumeLayout(false);
-            this.tableLayoutPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).EndInit();
             this.panelLicense.ResumeLayout(false);
             this.ResumeLayout(false);
