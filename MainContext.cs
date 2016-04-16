@@ -52,7 +52,9 @@ namespace Lurkingwind
         public MainContext()
         {
             optionsForm = new OptionsForm();
+            optionsForm.StartPosition = FormStartPosition.CenterScreen;
             aboutbox = new AboutBox();
+            aboutbox.StartPosition = FormStartPosition.CenterScreen;
 
             settings = new Settings();
             LoadSettings();
