@@ -43,6 +43,7 @@ namespace Lurkingwind
             InitializeComponent();
 
             Icon = Properties.Resources.icon_lurkingwind;
+            Text = string.Format("Options for {0}", Application.ProductName);
             // Use the flat style so that selected combo boxes look
             // reversed like other cells.
             actionColumn.FlatStyle = FlatStyle.Flat;
