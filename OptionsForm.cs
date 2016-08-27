@@ -42,6 +42,7 @@ namespace Lurkingwind
         {
             InitializeComponent();
 
+            Font = SystemFonts.MessageBoxFont;
             Icon = Properties.Resources.icon_lurkingwind;
             Text = string.Format("Options for {0}", Application.ProductName);
             // Use the flat style so that selected combo boxes look
