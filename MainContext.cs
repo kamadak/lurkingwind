@@ -101,7 +101,7 @@ namespace Lurkingwind
             var options = new ToolStripMenuItem("&Options...", null);
             options.Click += new EventHandler((sender, e) => ShowOptionsDialog());
             ctxmenu.Items.Add(options);
-            var about = new ToolStripMenuItem("&About", null);
+            var about = new ToolStripMenuItem("&About Lurkingwind", null);
             about.Click += new EventHandler((sender, e) => ShowAboutBox());
             ctxmenu.Items.Add(about);
             ctxmenu.Items.Add(new ToolStripSeparator());
